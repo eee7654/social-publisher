@@ -1,0 +1,22 @@
+
+
+.custom-settings-tabs .ant-tabs-nav {
+    margin-bottom: 0 !important;
+    background-color: var(--color-bg-base);
+    border-bottom: 1px solid var(--color-border);
+}
+.custom-settings-tabs .ant-tabs-tab {
+    color: var(--color-text-muted) !important;
+}
+.custom-settings-tabs .ant-tabs-tab-active * {
+    color: var(--color-primary) !important;
+    font-weight: bold;
+}
+.custom-settings-tabs .ant-tabs-ink-bar {
+    background: var(--color-primary) !important;
+}
+
+.custom-settings-tabs .ant-tabs-content-holder {
+    height: 100% !important;
+    overflow-y: auto !important;
+}

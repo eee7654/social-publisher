@@ -1,0 +1,81 @@
+
+:root {
+    --table-scroll-y: calc(100vh - 248px - 2rem);
+}
+@media (max-width: 640px) {
+    :root {
+        --table-scroll-y: calc(100vh - 372px - 2rem); 
+    }
+}
+@media (max-width: 400px) {
+    :root {
+        --table-scroll-y: calc(100vh - 340px - 2rem); 
+    }
+}
+
+.custom-table,
+.custom-table .ant-spin-nested-loading,
+.custom-table .ant-spin-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.custom-table .ant-table {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    background: transparent !important;
+}
+
+.custom-table .ant-table-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+/* 🎯 شلیک نهایی: اسکرول فقط روی محتوای ردیف‌ها اعمال بشه */
+.custom-table .ant-table-content {
+    flex: 1;
+    overflow-y: auto !important;
+    /* برای استایل زیبای اسکرول‌بار (اختیاری) */
+    scrollbar-width: thin; 
+}
+
+/* استایل‌دهی به هدرها و ردیف‌ها (همون کدهای زیبای خودت) */
+.custom-table .ant-table-thead > tr > th {
+    background-color: var(--bg-base) !important;
+    color: var(--text-muted) !important;
+    border-bottom: 1px solid var(--color-border) !important;
+    font-weight: 600;
+    /* این خط باعث میشه هدر موقع اسکرول سر جاش پین بشه */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.custom-table .ant-table-tbody > tr > td { 
+    border-bottom: 1px solid var(--color-border) !important; 
+}
+
+/* ثابت موندن پجینیشن در پایین جدول */
+.custom-table .ant-pagination {
+    margin-top: 16px !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0; /* جلوگیری از مچاله شدن پجینیشن */
+}
+
+.custom-table .ant-pagination-item-active {
+    background-color: var(--color-primary-active) !important;
+    border-color: var(--color-primary-active) !important;
+}
+.custom-table .ant-pagination-item-active a { 
+    color: white !important; 
+}
+
+.ant-tabs-nav::before{
+    border: none !important;
+}

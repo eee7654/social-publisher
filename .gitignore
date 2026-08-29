@@ -1,0 +1,65 @@
+# ==========================================
+# Monorepo Root .gitignore
+# ==========================================
+# See https://help.github.com/articles/ignoring-files/
+
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Local env files (Strictly ignored for security)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.secret
+*.pem
+!.env.example
+
+# Testing
+coverage
+.nyc_output
+
+# Turbo & Next.js
+.turbo
+.next/
+out/
+
+# Build Outputs
+build
+dist
+*.tsbuildinfo
+
+# Vercel
+.vercel
+
+# Debug & Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# Linters & Formatters Caches
+.eslintcache
+.stylelintcache
+.prettiercache
+
+# Editor & IDE Directories
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db

@@ -1,0 +1,333 @@
+{
+  "common": {
+    "app_name":"Esima Panel",
+    "dashboard": "Dashboard",
+    "logout": "Logout",
+    "settings": "Settings",
+    "refresh": "Refresh",
+    "no_data": "No Data Found",
+    "delete_title": "Delete Item",
+    "delete_confirm": "Are you sure you want to delete this? This action cannot be undone.",
+    "yes": "Yes",
+    "no": "No",
+    "delete": "Delete",
+    "active": "Active",
+    "inactive": "Inactive",
+    "cancel": "Cancel",
+    "back": "Return to previous page",
+    "create": "Create",
+    "edit": "Edit",
+    "actions": "Actions",
+    "copied": "Copied to clipboard",
+    "confirm_saved": "I stored it, close"
+  },
+  "errors": {
+    "GEN_UNKNOWN_ERROR": "An unknown error has occurred...",
+    "GEN_VALIDATION_FAILED": "Validation failed. Please check the input values ​​and try again.",
+    "GEN_INTERNAL_ERROR": "An unexpected error occurred on the server. Please try again later.",
+    "GEN_FORBIDDEN_ACCESS": "Access denied. You are not authorized to perform this operation.",
+    "GEN_UPDATE_FAILED": "An error occurred updating the information. Please try again.",
+
+    "DB_DUPLICATE_ENTRY": "This information is duplicate and has already been registered in the system.",
+
+    "USER_EXISTS": "A user with this username or email address already exists.",
+    "USER_NOT_FOUND": "The requested user was not found.",
+
+    "ORG_NOT_FOUND": "The requested organization or branch was not found.",
+    "ORG_NOT_MEMBER": "You are a member of You are not this organization or branch.",
+    "ORG_NOT_ENOUGH_ACCESS": "You do not have access to one or more of the requested organizations.",
+    "INVALID_PASSWORD": "The current password is incorrect.",
+    "AUTH_SESSION_EXPIRED": "Your session has expired. Please log in again to continue.",
+
+    "ROLE_DUPLICATE_NAME": "A role with the exact same name already exists. Please choose a different name.",
+    "ROLE_INSUFFICIENT_LEVEL": "You do not have the required access level to assign or modify this role.",
+    "ROLE_NOT_FOUND": "The specified role was not found. It may have been deleted."
+  },
+  "success": {
+    "ROLE_CHANGED_SUCCESSFULLY": "Role and permissions assignment successfully completed.",
+    "USER_UPDATED_SUCCESSFULLY": "User information successfully updated.",
+    "USER_CREATED_SUCCESSFULLY": "New user successfully created.",
+    "ORG_CREATED_SUCCESSFULLY": "New organization/branch successfully created.",
+    "ORG_UPDATED_SUCCESSFULLY": "Organization/branch information successfully updated."
+  },
+  "pages": {
+    "home": "Home",
+    "roles": "Roles",
+    "organizations":"Organizations",
+    "users":"Users / Members",
+    "settings": "Settings"
+  },
+  "auth": {
+    "title": "Sign In",
+    "subtitle": "Integrated Management Panel",
+    "version_label": "Version:",
+    "tab_email": "Email",
+    "tab_sms": "SMS",
+    "tab_register": "Register",
+    "username_placeholder": "Your Username",
+    "password_placeholder": "Password",
+    "mobile_placeholder": "Mobile Number",
+    "name_placeholder": "Full Name",
+    "otp_placeholder": "- - - - -",
+    "code_sent_to": "Code sent to",
+    "edit": "(Edit)",
+    "btn_login": "Login",
+    "btn_send_code": "Send Code",
+    "btn_verify": "Verify & Login",
+    "btn_register": "Sign Up",
+    "or_login_with": "OR",
+    "google_login": "Continue with Google",
+    "welcome": "Welcome back!",
+    "error_login": "Invalid credentials",
+    "success_register": "Account created! Please login.",
+    "code_sent": "Verification code sent",
+    "req_username": "Username is required",
+    "req_pass": "Password is required",
+    "req_mobile": "Invalid mobile format",
+    "btn_resend_email": "Resend Verification Link",
+    "btn_back_to_login": "Back to Login",
+    "email_resent_success": "Verification link resent successfully",
+    "logout_success": "Logged out successfully",
+    "forgot_password":"Forgot Password",
+    "errors": {
+      "INVALID_USERNAME_OR_PASSWORD": "The username or password is incorrect.",
+      "INVALID_PASSWORD": "The password entered is incorrect.",
+      "USER_NOT_FOUND": "No user with these specifications was found.",
+      "TOO_MANY_REQUESTS": "The number of requests exceeds the allowed limit. Please wait a moment.",
+      "TIMEOUT": "Unable to connect to the server (timeout).",
+      "NETWORK_ERROR": "Problem connecting to the network. Check your internet.",
+      "DEFAULT": "There was a problem signing in. Please try again."
+    }
+  },
+  "home":{
+    "orgSelector": {
+      "title": "Select Workspace",
+      "description": "You are a member of multiple organizations or branches. Please select the workspace you wish to access.",
+      "redirecting": "Preparing workspace...",
+      "rolePrefix": "Role:",
+      "notJoined": "You are not a member of any organization. Please contact the administration.",
+      "inactive_org": "The workspace '{name}' has been suspended by management and is currently unavailable for selection."
+    }
+  },
+  "roles": {
+    "pageTitle": "Manage roles and permissions",
+    "messages": {
+      "invalidJson": "Invalid JSON structure! Please check the syntax.",
+      "requiredActionCode": "Action code is required (e.g. export)",
+      "createSuccess": "The role «{name}» was created successfully.",
+      "noRoleSelected": "No role selected",
+      "accessSavedSuccess": "Accesses for role {name} saved."
+    },
+    "buttons": {
+      "newRole": "New Role",
+      "saveChanges": "Save Changes",
+      "addResource": "Add new resource to this role",
+      "submitCondition": "Submit Condition",
+      "cancel": "Cancel",
+      "createRole": "Create Role"
+    },
+    "emptyStates": {
+      "noResourceAssigned": "No resources assigned.",
+      "selectRole": "Select a role"
+    },
+    "form": {
+      "configTitle": "Configuration: {name}",
+      "configDesc": "Select or create modules and allowed operations.",
+      "accessLabel": "Access",
+      "allowed": "Allow...",
+      "forbidden": "Forbid...",
+      "resourceLabel": "Resource / Module",
+      "actionsLabel": "Operations",
+      "fieldsLabel": "Fields",
+      "defineNewAction": "Define New Action (Developer Only):",
+      "allFields": "All fields (*)",
+      "slugLabel": "English name (Slug)",
+      "displayTitleLabel": "Display title",
+      "levelLabel": "Organization level"
+    },
+    "placeholders": {
+      "searchRole": "Search for role...",
+      "projectExample": "Example: Project",
+      "selectFirst": "First specify source",
+      "selectOrAdd": "Select...",
+      "actionCode": "Code (e.g. export)",
+      "actionDesc": "Description (e.g. output)",
+      "salaryExample": "Example: !salary",
+      "slugExample": "Example: financial_manager",
+      "titleExample": "Example: Financial Manager",
+      "levelExample": "Example: 30"
+    },
+    "tooltips": {
+      "actionInfo": "Select from list or click + button in menu",
+      "fieldsInfo": "Empty = all fields. To not access: !salary",
+      "editDynamicCondition": "Edit Dynamic Conditions",
+      "addDynamicCondition": "Add Dynamic Condition",
+      "deleteRule": "Delete Rule"
+    },
+    "modals": {
+      "abacTitle": "Dynamic Access Conditions (ABAC)",
+      "abacHelpText": "Write your condition in JSON format and based on standard MongoDB operators.",
+      "simpleConditionExample": "Simple condition example:",
+      "dynamicConditionExample": "Dynamic example:",
+      "newRoleTitle": "Create a new system role",
+      "slugHelpText": "For use in the panel infrastructure only.",
+      "titleHelpText": "For display in the list of roles in this panel."
+    },
+    "validation": {
+      "slugRequired": "Please enter the role name in English",
+      "slugPattern": "Only English letters, numbers, and underscores (_) are allowed",
+      "titleRequired": "Please enter the role title",
+      "levelRequired": "A role level is required",
+      "levelMaxError": "You are not allowed to create a role higher than your own level."
+    }
+  },
+  "organs": {
+    "pageTitle": "Manage branches and organization",
+    "header": {
+      "title": "List of Organizations",
+      "desc": "Manage, create and edit branches and Organizations",
+      "searchPlaceholder": "Search by branch name or ID...",
+      "addBtn": "Add new branch"
+    },
+    "table": {
+      "name": "Branch / Organ name",
+      "slug": "ID (Slug)",
+      "members": "Number of members",
+      "status": "Activity status",
+      "createdAt": "Establishment date",
+      "actions": "Operations"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "actions": {
+      "edit": "Edit information",
+      "addSub": "Add sub-department",
+      "suspend": "Suspend branch",
+      "activate": "Activate",
+      "changeStatus": "Are you sure this branch is {status}?"
+    },
+    "empty": "No branches found"
+  },
+  "users": {
+    "pageTitle": "Manage users",
+    "header": {
+      "desc": "Manage accesses, roles and member information",
+      "searchPlaceholder": "Search for name, email or national code...",
+      "addBtn": "Add user"
+    },
+    "table": {
+      "name": "First and last name",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Operations"
+    },
+    "form": {
+      "titleCreate": "Add new user",
+      "titleEdit": "Edit user",
+      "tabs": {
+        "basicInfo": "Basic information",
+        "access": "Accesses and roles"
+      },
+      "fullName": "First and last name",
+      "currentUser": "You",
+      "email": "Email",
+      "username": "Username",
+      "password": "Password",
+      "isActive": "Activity status (active/suspended)",
+      "singleRole": "Role System",
+      "multiRoleTitle": "Assign Branches and Roles",
+      "addMembership": "Add New Access",
+      "selectOrg": "Select Organization/Branch",
+      "selectRole": "Select Role",
+      "submit": "Save Information",
+      "cancel": "Cancel",
+      "validation": {
+        "required": "Completing this field is required",
+        "email": "Invalid Email Format",
+        "orgRequired": "Select Organization is Required",
+        "roleRequired": "Select Role is Required"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "actions": {
+      "edit": "Edit Basic Information",
+      "roles": "Assign Organization and Role",
+      "suspend": "Suspend User",
+      "activate": "Activate User",
+      "changeStatus": "Are you sure about the {status} of this user?",
+      "successCreate": "New User Created Successfully ",
+      "successEdit": "User information successfully updated"
+    },
+    "empty": "No users found in this organization."
+  },
+  "settings": {
+    "pageTitle": "Settings",
+    "tabs": {
+      "profile": "Account",
+      "security": "Security",
+      "devices": "Active devices",
+      "workspaces": "Workspaces"
+    },
+    "logout": {
+      "button": "Logout",
+      "confirmTitle": "Logout",
+      "confirmDesc": "Do you want to log out of your account?",
+      "success": "Logout operation was successful. Redirecting...",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "profile": {
+      "username": "Username",
+      "usernameDesc": "This name is used to log in to the system and use its features",
+      "fullName": "First and last name",
+      "fullNameDesc": "You will be displayed with this name throughout the system",
+      "sheba": "Sheba ID",
+      "shebaDesc": "To settle your account balance with the system, please enter your Sheba ID and specify",
+      "theme": "Theme",
+      "themeDesc": "Change panel display mode (dark/light)",
+      "lang": "System language",
+      "langDesc": "Change default admin panel language",
+      "langItems":{
+        "IR":"Persian",
+        "US":"English"
+      },
+      "save": "Save changes",
+      "noChanges": "No changes have occurred in this section",
+      "saveSuccess": "New settings saved successfully"
+    },
+    "devices": {
+      "title": "Active devices",
+      "desc": "List of devices and browsers currently connected to your account.",
+      "currentSession": "Current session (yours)",
+      "revoke": "Sign out of device",
+      "revokeConfirm": "Are you sure you want to sign out this device?",
+      "revokeSuccess": "The device was successfully signed out of your account.",
+      "rule24h": "For security reasons, it is not possible to sign out other devices for 24 hours after signing in with a new device.",
+      "ip": "IP address:",
+      "lastActive": "Last activity:",
+      "createdAt": "Sign in date:",
+      "deviceUnknown": "Device Unknown",
+      "browserUnknown": "Browser Unknown",
+      "osUnknown": "OS Unknown",
+      "ipUnknown": "IP Unknown"
+    },
+    "workspaces": {
+      "emptyDesc": "You are not currently a member of any organization or workspace.",
+      "activeLabel": "Active workspace",
+      "rolePrefix": "Role:",
+      "inactiveTag": "Inactive",
+      "inactiveToast": "The workspace {name} is currently inactive.",
+      "alreadyActiveToast": "You are already in this workspace.",
+      "redirectingToast": "Redirecting to new workspace..."
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "domain_invalid": "Invalid domain format (correct example: google.com)"
+  }
+}

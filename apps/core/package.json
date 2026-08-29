@@ -1,0 +1,42 @@
+{
+  "name": "@esima/core",
+  "version": "0.0.1",
+  "private": true,
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --inspect src/server.js",
+    "build": "tsup",
+    "start": "cross-env NODE_ENV=production node dist/server.js"
+  },
+  "dependencies": {
+    "@casl/ability": "^6.8.0",
+    "@ucast/core": "^1.10.2",
+    "@ucast/sql": "^0.1.0",
+    "axios": "^1.13.6",
+    "better-auth": "^1.5.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express-rate-limit": "^8.3.0",
+    "generate-password": "^1.7.1",
+    "helmet": "^8.1.0",
+    "http-proxy-agent": "^7.0.2",
+    "jalali-moment": "^3.3.11",
+    "knex": "^3.1.0",
+    "lru-cache": "^11.2.6",
+    "mime": "^4.0.1",
+    "mini-svg-data-uri": "^1.4.4",
+    "mysql2": "^3.16.0",
+    "next-connect": "^1.0.0",
+    "objection": "^3.1.5",
+    "simple-body-validator": "^1.3.9",
+    "ua-parser-js": "^2.0.9",
+    "ulid": "^3.0.2",
+    "ultimate-express": "^2.0.13"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0"
+  }
+}

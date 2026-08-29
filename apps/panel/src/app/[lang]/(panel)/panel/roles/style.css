@@ -1,0 +1,11 @@
+.roleMenu .ant-menu-item-selected {
+    background: var(--color-primary-active) !important;
+    background-image:unset !important;
+    color:#fefefe !important;
+}
+
+.roleActions .ant-btn-icon {
+    display: grid;
+    place-items: center;
+    margin-inline-end: 1.5px;
+}

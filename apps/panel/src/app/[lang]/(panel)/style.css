@@ -1,0 +1,34 @@
+@-webkit-keyframes ma-bg-move {
+  0% {
+    background-position:0% 50%
+  }
+  100% {
+    background-position:100% 50%
+  }
+}
+@keyframes ma-bg-move {
+  0% {
+    background-position:-100% -100%
+  }
+  50% {
+    background-position:-200% -200%
+  }
+  100% {
+    background-position:-100% -100%
+  }
+}
+
+.ant-menu-item-selected {
+  background-image: linear-gradient(45deg, hsla(120, 11%, 41%, 0.7) 0%, var(--color-primary-active) 50%, hsla(120, 11%, 41%, 0.7) 100%) !important;
+  background-size: 200% 200%;
+  animation: ma-bg-move linear 6.6s infinite;
+  animation-name: ma-bg-move;
+  color:#E0FBFC !important;
+}
+
+.custom-header {
+  background:transparent !important;
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%) !important;
+  background: -moz-linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%) !important;
+  background: -webkit-linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%) !important;
+}

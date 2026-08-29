@@ -1,0 +1,76 @@
+/* src/app/[lang]/panel/login/login.module.css */
+
+.main-card::before {
+  display: flex;
+  content: "";
+  inset: 0;
+  height: 100%;
+  border-radius: 20px;
+  padding: 3px;
+  position: absolute;
+  /* 👇 ترکیب طلایی موجود (#F0CEA0) با یک بنفش نئونی (#8B5CF6) */
+  background: linear-gradient(136.42deg, #F0CEA0 10%, rgba(155, 111, 238, 0) 45%, rgba(123, 127, 234, 0) 60%, #8B5CF6 90%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.main-card {
+  width: 100%;
+  max-width: 400px;
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  min-height: 550px;
+  /* 👇 کمی تیره‌تر برای کنتراست بهتر با طلایی و بنفش */
+    background: rgba(116,209,238,0.05); 
+  box-shadow: 0px 0px 40px rgba(139, 92, 246, 0.15); /* سایه بنفش محو */
+  position: relative;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-img {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 1rem;
+}
+
+.get-started {
+  height: 45px; /* کمی بلندتر برای مدرن‌تر شدن */
+  /* 👇 گرادینت دکمه: از بنفش عمیق به سمت طلایی */
+  background: linear-gradient(90deg, #7C3AED 0%, #9F68E6 60%, #F0CEA0 100%) !important;
+  border-radius: 12px;
+  
+  color: #fff !important;
+  /* سایه متن برای خوانایی روی بخش طلایی دکمه */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  
+  /* درخشش بنفش دور دکمه */
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4) !important;
+  
+  width: 100%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background-size: 150% auto !important; /* برای انیمیشن هاور */
+}
+
+.get-started:hover {
+  /* حرکت گرادینت در هاور */
+  background-position: right center !important; 
+  box-shadow: 0 6px 25px rgba(240, 206, 160, 0.4) !important; /* سایه طلایی در هاور */
+  transform: translateY(-2px);
+  color: #fff !important;
+}
+
+@media (max-width: 640px) {
+    .main-card {
+        max-width: 90%;
+        min-height: auto;
+    }
+}

@@ -1,0 +1,336 @@
+{
+  "common": {
+    "app_name":"پنل اسیما",
+    "dashboard": "داشبورد",
+    "logout": "خروج",
+    "settings": "تنظیمات",
+    "refresh": "بروزرسانی",
+    "no_data": "داده‌ای یافت نشد",
+    "delete_title": "حذف آیتم",
+    "delete_confirm": "آیا از حذف این مورد اطمینان دارید؟ این عملیات قابل بازگشت نیست.",
+    "yes": "بله",
+    "no": "خیر",
+    "delete": "حذف",
+    "active": "فعال",
+    "inactive": "غیرفعال",
+    "cancel": "انصراف",
+    "back": "بازگشت به صفحه قبل",
+    "create": "ساختن",
+    "edit": "ویرایش",
+    "actions": "عملیات",
+    "copied": "در کلیپ‌بورد کپی شد",
+    "confirm_saved": "ذخیره کردم، ببند"
+  },
+  "errors": {
+    "GEN_UNKNOWN_ERROR": "خطای ناشناخته‌ای رخ داده است...",
+    "GEN_VALIDATION_FAILED": "اعتبارسنجی ناموفق بود. لطفا مقادیر ورودی را بررسی کنید و دوباره امتحان کنید.",
+    "GEN_INTERNAL_ERROR": "یک خطای غیرمنتظره در سرور رخ داد. لطفاً بعداً دوباره امتحان کنید.",
+    "GEN_FORBIDDEN_ACCESS": "دسترسی رد شد. شما اجازه انجام این عملیات را ندارید.",
+    "GEN_UPDATE_FAILED": "به‌روزرسانی اطلاعات با خطا مواجه شد. لطفا مجددا تلاش کنید.",
+    
+    "DB_DUPLICATE_ENTRY": "این اطلاعات تکراری است و قبلاً در سیستم ثبت شده است.",
+    
+    "USER_EXISTS": "کاربری با این نام کاربری یا ایمیل از قبل وجود دارد.",
+    "USER_NOT_FOUND": "کاربر مورد نظر یافت نشد.",
+    
+    "ORG_NOT_FOUND": "سازمان یا شعبه مورد نظر یافت نشد.",
+    "ORG_NOT_MEMBER": "شما عضو این سازمان یا شعبه نیستید.",
+    "ORG_NOT_ENOUGH_ACCESS": "شما به یک یا چند سازمانِ درخواستی دسترسی ندارید.",
+    
+    "INVALID_PASSWORD": "رمز عبور فعلی اشتباه است.",
+    "AUTH_SESSION_EXPIRED": "نشست کاربری شما پایان یافته است. لطفا برای ادامه دوباره وارد شوید.",
+    
+    "ROLE_DUPLICATE_NAME": "نقشی دقیقاً با همین نام از قبل وجود دارد. لطفا نام دیگری انتخاب کنید.",
+    "ROLE_INSUFFICIENT_LEVEL": "شما سطح دسترسیِ لازم برای تخصیص یا تغییرِ این نقش را ندارید.",
+    "ROLE_NOT_FOUND": "نقش مشخص شده یافت نشد. ممکن است حذف شده باشد."
+  },
+  "success": {
+    "ROLE_CHANGED_SUCCESSFULLY": "تخصیص نقش و دسترسی‌ها با موفقیت انجام شد.",
+    "USER_UPDATED_SUCCESSFULLY": "اطلاعات کاربر با موفقیت به‌روزرسانی شد.",
+    "USER_CREATED_SUCCESSFULLY": "کاربر جدید با موفقیت ایجاد شد.",
+    "ORG_CREATED_SUCCESSFULLY": "سازمان/شعبه جدید با موفقیت ایجاد شد.",
+    "ORG_UPDATED_SUCCESSFULLY": "اطلاعات سازمان/شعبه با موفقیت به‌روزرسانی شد."
+  },
+  "pages": {
+    "home": "حساب کاربری",
+    "roles": "مدیریت نقش‌ها",
+    "organizations":"سازمان‌ها",
+    "users":"کاربران / اعضا",
+    "settings": "تنظیمات"
+  },
+  "auth": {
+    "title": "ورود به سیستم",
+    "subtitle": "پنل مدیریت یکپارچه",
+    "version_label": "نسخه اجرایی:",
+    "tab_email": "ایمیل",
+    "tab_sms": "پیامک",
+    "tab_register": "ثبت‌نام",
+    "username_placeholder": "نام کاربری شما",
+    "password_placeholder": "رمز عبور",
+    "mobile_placeholder": "شماره موبایل (۰۹۱۲...)",
+    "name_placeholder": "نام و نام خانوادگی",
+    "otp_placeholder": "- - - - -",
+    "code_sent_to": "کد ارسال شد به",
+    "edit": "(ویرایش)",
+    "btn_login": "ورود",
+    "btn_send_code": "ارسال کد",
+    "btn_verify": "تایید و ورود",
+    "btn_register": "ثبت‌نام",
+    "no_account":"حساب کاربری ندارید؟",
+    "or_login_with": "یا",
+    "google_login": "ورود با گوگل",
+    "welcome": "خوش آمدید!",
+    "error_login": "اطلاعات ورود اشتباه است",
+    "success_register": "حساب ساخته شد! لطفا وارد شوید.",
+    "code_sent": "کد تایید ارسال شد",
+    "req_username": "نام کاربری الزامی است",
+    "req_pass": "رمز عبور الزامی است",
+    "req_mobile": "فرمت موبایل صحیح نیست",
+    "check_email_title": "ایمیل خود را بررسی کنید",
+    "check_email_desc": "لینک فعال‌سازی حساب کاربری به آدرس زیر ارسال شد. لطفا روی آن کلیک کنید:",
+    "btn_resend_email": "ارسال مجدد لینک فعال‌سازی",
+    "btn_back_to_login": "بازگشت به صفحه ورود",
+    "email_resent_success": "لینک فعال‌سازی مجددا ارسال شد",
+    "logout_success": "با موفقیت خارج شدید",
+    "forgot_password": "فراموشی رمزعبور",
+    "errors": {
+      "INVALID_USERNAME_OR_PASSWORD": "نام کاربری یا رمز عبور اشتباه است.",
+      "INVALID_PASSWORD": "رمز عبور وارد شده اشتباه است.",
+      "USER_NOT_FOUND": "کاربری با این مشخصات یافت نشد.",
+      "TOO_MANY_REQUESTS": "تعداد درخواست‌ها بیش از حد مجاز است. لطفاً کمی صبر کنید.",
+      "TIMEOUT": "ارتباط با سرور برقرار نشد (تایم‌اوت).",
+      "NETWORK_ERROR": "مشکل در ارتباط با شبکه. اینترنت خود را بررسی کنید.",
+      "DEFAULT": "مشکلی در ورود پیش آمد. لطفاً دوباره تلاش کنید."
+    }
+  },
+  "home":{
+    "orgSelector": {
+      "title": "انتخاب فضای کاری",
+      "description": "شما در چندین سازمان یا شعبه عضو هستید. برای ورود به پنل مدیریت، لطفاً فضایی که قصد فعالیت در آن را دارید انتخاب کنید.",
+      "redirecting": "در حال آماده‌سازی فضای کاری...",
+      "rolePrefix": "نقش شما:",
+      "notJoined": "شما عضو هیچ سازمانی نیستید. لطفاً با مدیریت تماس بگیرید.",
+      "inactive_org": "فضای کاری '{name}' توسط مدیریت تعلیق شده است و فعلاً قابل انتخاب نیست"
+    }
+  },
+  "roles": {
+    "pageTitle": "مدیریت نقش‌ها و دسترسی‌ها",
+    "messages": {
+      "invalidJson": "ساختار JSON نامعتبر است! لطفا سینتکس را بررسی کنید.",
+      "requiredActionCode": "وارد کردن کد عملیات الزامی است (مثلا export)",
+      "createSuccess": "نقش «{name}» با موفقیت ایجاد شد.",
+      "noRoleSelected": "نقشی انتخاب نشده است",
+      "accessSavedSuccess": "دسترسی‌های نقش {name} ذخیره شد.",
+      "noRuleDefined": "نقشی در سیستم موجود نیست"
+    },
+    "buttons": {
+      "newRole": "نقش جدید",
+      "saveChanges": "ذخیره تغییرات",
+      "addResource": "افزودن منبع جدید به این نقش",
+      "submitCondition": "ثبت شرط",
+      "cancel": "انصراف",
+      "createRole": "ایجاد نقش"
+    },
+    "emptyStates": {
+      "noResourceAssigned": "هیچ منبعی اختصاص داده نشده است.",
+      "selectRole": "یک نقش را انتخاب کنید"
+    },
+    "form": {
+      "configTitle": "پیکربندی: {name}",
+      "configDesc": "ماژول‌ها و عملیات مجاز را انتخاب یا ایجاد کنید.",
+      "accessLabel": "دسترسی",
+      "allowed": "مجاز",
+      "forbidden": "ممنوع",
+      "resourceLabel": "منبع / ماژول",
+      "actionsLabel": "عملیات",
+      "fieldsLabel": "فیلدها",
+      "defineNewAction": "تعریف عملیات جدید (فقط توسعه‌دهنده):",
+      "allFields": "تمام فیلدها (*)",
+      "slugLabel": "نام انگلیسی (Slug)",
+      "displayTitleLabel": "عنوان نمایشی",
+      "levelLabel": "سطح سازمانی"
+    },
+    "placeholders": {
+      "searchRole": "جستجوی نقش...",
+      "projectExample": "مثلا: Project",
+      "selectFirst": "ابتدا منبع را مشخص کنید",
+      "selectOrAdd": "انتخاب کنید...",
+      "actionCode": "کد (مثلا export)",
+      "actionDesc": "توضیح (مثلا خروجی)",
+      "salaryExample": "مثلاً: !salary",
+      "slugExample": "مثلاً: financial_manager",
+      "titleExample": "مثلاً: مدیر مالی",
+      "levelExample": "مثلاً: 30"
+    },
+    "tooltips": {
+      "actionInfo": "از لیست انتخاب کنید یا روی دکمه + در منو کلیک کنید",
+      "fieldsInfo": "خالی = همه فیلدها. برای عدم دسترسی: !salary",
+      "editDynamicCondition": "ویرایش شروط داینامیک",
+      "addDynamicCondition": "افزودن شرط داینامیک",
+      "deleteRule": "حذف قانون"
+    },
+    "modals": {
+      "abacTitle": "شروط داینامیک دسترسی (ABAC)",
+      "abacHelpText": "شرط خود را با فرمت JSON و بر اساس عملگرهای استاندارد MongoDB بنویسید.",
+      "simpleConditionExample": "مثال شرط ساده:",
+      "dynamicConditionExample": "مثال داینامیک:",
+      "newRoleTitle": "ایجاد نقش سیستمی جدید",
+      "slugHelpText": "فقط برای استفاده در زیرساخت پنل است.",
+      "titleHelpText": "برای نمایش در لیست نقش‌های همین پنل است."
+    },
+    "validation": {
+      "slugRequired": "لطفاً نام انگلیسی نقش را وارد کنید",
+      "slugPattern": "فقط حروف انگلیسی، اعداد و خط‌تیره پایین (_) مجاز است",
+      "titleRequired": "لطفاً عنوان نقش را وارد کنید",
+      "levelRequired": "تعیین سطح نقش الزامی است",
+      "levelMaxError": "شما مجاز به ساخت نقشی بالاتر از سطح خودتان نیستید."
+    }
+  },
+  "organs": {
+    "pageTitle": "مدیریت شعب و سازمان‌ها",
+    "header": {
+      "title": "لیست ارگان‌ها",
+      "desc": "مدیریت، ایجاد و ویرایش شعب و ارگان‌ها",
+      "searchPlaceholder": "جستجو با نام یا شناسه شعبه...",
+      "addBtn": "افزودن شعبه جدید"
+    },
+    "table": {
+      "name": "نام شعبه / ارگان",
+      "slug": "شناسه (Slug)",
+      "members": "تعداد اعضا",
+      "status": "وضعیت فعالیت",
+      "createdAt": "تاریخ تاسیس",
+      "actions": "عملیات"
+    },
+    "status": {
+      "active": "فعال",
+      "suspended": "معلق"
+    },
+    "actions": {
+      "edit": "ویرایش اطلاعات",
+      "addSub": "افزودن زیرمجموعه",
+      "suspend": "تعلیق",
+      "activate": "فعال‌سازی",
+      "changeStatus": "آیا از {status} این شعبه اطمینان دارید؟"
+    },
+    "empty": "هیچ شعبه‌ای یافت نشد"
+  },
+  "users": {
+    "pageTitle": "مدیریت کاربران",
+    "header": {
+      "desc": "مدیریت دسترسی‌ها، نقش‌ها و اطلاعات اعضا",
+      "searchPlaceholder": "جستجو نام، ایمیل یا کدملی...",
+      "addBtn": "افزودن کاربر"
+    },
+    "table": {
+      "name": "نام و نام خانوادگی",
+      "role": "نقش",
+      "status": "وضعیت",
+      "actions": "عملیات"
+    },
+    "form": {
+      "titleCreate": "افزودن کاربر جدید",
+      "titleEdit": "ویرایش کاربر",
+      "tabs": {
+        "basicInfo": "اطلاعات پایه",
+        "access": "دسترسی‌ها و نقش‌ها"
+      },
+      "fullName": "نام و نام خانوادگی",
+      "currentUser": "شما",
+      "email": "پست الکترونیک",
+      "username": "نام کاربری",
+      "password": "رمز عبور",
+      "isActive": "وضعیت فعالیت (فعال/معلق)",
+      "singleRole": "نقش سیستمی",
+      "multiRoleTitle": "تخصیص شعب و نقش‌ها",
+      "addMembership": "افزودن دسترسی جدید",
+      "selectOrg": "انتخاب سازمان/شعبه",
+      "selectRole": "انتخاب نقش",
+      "submit": "ذخیره اطلاعات",
+      "cancel": "انصراف",
+      "validation": {
+        "required": "تکمیل این فیلد الزامی است",
+        "email": "فرمت ایمیل نامعتبر است",
+        "orgRequired": "انتخاب سازمان الزامی است",
+        "roleRequired": "انتخاب نقش الزامی است"
+      }
+    },
+    "status": {
+      "active": "فعال",
+      "suspended": "معلق"
+    },
+    "actions": {
+      "edit": "ویرایش اطلاعات پایه",
+      "roles": "تخصیص سازمان و نقش",
+      "suspend": "تعلیق کاربر",
+      "activate": "فعال‌سازی کاربر",
+      "changeStatus": "آیا از {status} این کاربر اطمینان دارید؟",
+      "successCreate": "کاربر جدید با موفقیت ایجاد شد",
+      "successEdit": "اطلاعات کاربر با موفقیت بروزرسانی شد"
+    },
+    "empty": "هیچ کاربری در این سازمان یافت نشد."
+  },
+  "settings": {
+    "pageTitle": "تنظیمات",
+    "tabs": {
+      "profile": "حساب کاربری",
+      "security": "امنیت",
+      "devices": "دستگاه‌های فعال",
+      "workspaces": "فضاهای کاری"
+    },
+    "logout": {
+      "button": "خروج",
+      "confirmTitle": "خروج از حساب کاربری",
+      "confirmDesc": "آیا مایل به خروج از حساب کاربری خود هستید؟",
+      "success": "عملیات خروج از حساب کاربری با موفقیت انجام شد. درحال هدایت...",
+      "yes": "بله",
+      "no": "خیر"
+    },
+    "profile": {
+      "username": "نام کاربری",
+      "usernameDesc": "جهت ورود به سامانه و استفاده از امکانات آن از این نام استفاده می‌شود",
+      "fullName": "نام و نام‌خانوادگی",
+      "fullNameDesc": "درتمامی سامانه شما با این نام نمایش داده می‌شوید",
+      "theme": "پوسته ظاهری",
+      "themeDesc": "تغییر حالت نمایش پنل (تاریک/روشن)",
+      "lang": "زبان سامانه",
+      "langDesc": "تغییر زبان پیش‌فرض پنل مدیریتی",
+      "langItems":{
+        "IR":"فارسی",
+        "US":"انگلیسی (آمریکا)"
+      },
+      "save": "ذخیره تغییرات",
+      "noChanges": "تغییری در این بخش رخ نداده است",
+      "saveSuccess": "تنظیمات جدید با موفقیت ذخیره شد"
+    },
+    "devices": {
+      "title": "دستگاه‌های فعال",
+      "desc": "لیست دستگاه‌ها و مرورگرهایی که در حال حاضر به حساب کاربری شما متصل هستند.",
+      "currentSession": "نشست فعلی (شما)",
+      "revoke": "خروج از دستگاه",
+      "revokeConfirm": "آیا از خروج این دستگاه اطمینان دارید؟",
+      "revokeSuccess": "دستگاه با موفقیت از حساب شما خارج شد.",
+      "rule24h": "به دلایل امنیتی، تا ۲۴ ساعت پس از ورود با یک دستگاه جدید، امکان خروج سایر دستگاه‌ها وجود ندارد.",
+      "ip": "آدرس آی‌پی:",
+      "lastActive": "آخرین فعالیت:",
+      "createdAt": "تاریخ ورود:",
+      "deviceUnknown": "دستگاه ناشناس",
+      "browserUnknown": "مرورگر ناشناس",
+      "osUnknown": "سیستم‌عامل ناشناس",
+      "ipUnknown": "آدرس آی‌پی نامشخص"
+    },
+    "workspaces": {
+      "emptyDesc": "شما در حال حاضر عضو هیچ سازمان یا فضای کاری نیستید.",
+      "activeLabel": "فضای کاری فعال",
+      "rolePrefix": "نقش:",
+      "inactiveTag": "غیرفعال",
+      "inactiveToast": "فضای کاری {name} در حال حاضر غیرفعال است.",
+      "alreadyActiveToast": "شما هم‌اکنون در همین فضای کاری قرار دارید.",
+      "redirectingToast": "در حال انتقال به فضای کاری جدید..."
+    }
+  },
+  "validation": {
+    "required": "لطفا این فیلد را پر کنید",
+    "domain_invalid": "فرمت دامنه معتبر نیست (مثال صحیح: google.com)"
+  }
+}
