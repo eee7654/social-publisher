@@ -6,6 +6,11 @@ import TelegramComposerSession from '../../db/models/core/TelegramComposerSessio
 import Campaign from '../../db/models/core/Campaign.js';
 import CampaignTarget from '../../db/models/core/CampaignTarget.js';
 import Asset from '../../db/models/core/Asset.js';
+import PublishJob from '../../db/models/core/PublishJob.js';
+import IntegrationConfig from '../../db/models/core/IntegrationConfig.js';
+import { createOutboxEvent } from '../outbox.js';
+import { JOB_STATUS } from '../constants.js';
+import { isPublisherAvailable } from './capabilities.js';
 import {
   COMPOSER_STATE,
   RECEIPT_STATUS,
@@ -14,7 +19,7 @@ import {
   CALLBACK_ACTIONS,
   MAX_TELEGRAM_FILE_BYTES,
 } from './constants.js';
-import { getTelegramClient } from './api.js';
+import { getTelegramClient, sanitizeTelegramError } from './api.js';
 import { resolveTelegramUserBinding } from './bindings.js';
 import {
   getActiveSession,
@@ -844,21 +849,35 @@ async function handleCallbackQuery({
   // Callback: FINAL_CONFIRM (Strictly idempotent transaction)
   if (data === CALLBACK_ACTIONS.FINAL_CONFIRM) {
     await answer('در حال ثبت نهایی...');
-    const result = await finalizeComposerSession(session.id, organizationId);
+    try {
+      const result = await finalizeComposerSession(session.id, organizationId);
 
-    if (result.alreadyFinalized) {
+      if (result.alreadyFinalized) {
+        await telegramClient.sendMessage({
+          chat_id: chatId,
+          text: 'ℹ️ <b>این کمپین پیش‌تر با موفقیت تایید و ایجاد شده است.</b>',
+        });
+        return;
+      }
+
       await telegramClient.sendMessage({
         chat_id: chatId,
-        text: 'ℹ️ این کمپین پیش‌تر با موفقیت آماده و نهایی شده است.',
+        text: `🚀 <b>کمپین با موفقیت تایید شد و صف انتشار آغاز گردید!</b>\n\n` +
+          `📋 شناسه کمپین: <code>${result.campaignId}</code>\n` +
+          `🎯 تعداد مقصدهای انتشار: <b>${result.targetsCount}</b>\n` +
+          `⚡ کارهای انتشار ایجاد شده: <b>${result.createdJobsCount}</b>\n\n` +
+          `عملیات انتشار توسط سرویس‌های پس‌زمینه در حال انجام است.`,
+      });
+      return;
+    } catch (err) {
+      console.error('[TelegramComposer] Error finalizing session:', err);
+      const safeErr = sanitizeTelegramError(err, telegramClient.botToken);
+      await telegramClient.sendMessage({
+        chat_id: chatId,
+        text: `❌ <b>خطا در نهایی‌سازی و ثبت کمپین:</b>\n<code>${safeErr}</code>`,
       });
       return;
     }
-
-    await telegramClient.sendMessage({
-      chat_id: chatId,
-      text: '🎉 <b>کمپین با موفقیت ایجاد و آماده شد (Ready)!</b>\n\n📌 <i>توجه: در فاز جاری، ارسال خودکار به پلتفرم‌ها هنوز فعال نشده است. کمپین در وضعیت آماده‌سازی قرار دارد.</i>',
-    });
-    return;
   }
 
   await answer('دستور نامعتبر است.');
@@ -935,12 +954,33 @@ export async function finalizeComposerSession(sessionId, organizationId) {
     const candidates = ctx.candidates || [];
     const selectedIds = new Set(ctx.selectedTargetIds || []);
     const selectedCandidates = candidates.filter(c => selectedIds.has(c.candidateId));
+
+    if (selectedCandidates.length === 0) {
+      throw new Error('حداقل یک مقصد انتشار باید انتخاب شود.');
+    }
+
+    // 2. Validate target eligibility and active integration connections
+    for (const c of selectedCandidates) {
+      const targetPlatform = c.platform === 'telegram_channel' ? 'telegram' : c.platform;
+      if (c.integrationConfigId) {
+        const config = await IntegrationConfig.query(trx)
+          .where({ id: c.integrationConfigId, organization_id: organizationId, status: 'active' })
+          .whereNull('deleted_at')
+          .first();
+        if (!config) {
+          throw new Error(`اتصال برای مقصد "${c.displayName || targetPlatform}" معتبر یا فعال نیست.`);
+        }
+      }
+    }
+
     const youtubeMetadata = metadata.youtube || {};
     if (selectedCandidates.some(c => c.platform === 'youtube') && (!youtubeMetadata.mode || !youtubeMetadata.title)) {
       throw new Error('YouTube target requires mode and title before finalization');
     }
 
-    // 2. Transactionally create/update CampaignTarget rows idempotently
+    let createdJobsCount = 0;
+
+    // 3. Transactionally create/update CampaignTarget rows idempotently
     for (const c of selectedCandidates) {
       // Check existing target
       const targetPlatform = c.platform === 'telegram_channel' ? 'telegram' : c.platform;
@@ -1006,8 +1046,9 @@ export async function finalizeComposerSession(sessionId, organizationId) {
         : ['ویدیو', 'اشتراک', 'الکسیو'];
       const aparatTitle = aparatMetadata.title || metadata.base_title || 'ویدیو جدید';
 
+      let targetRow;
       if (!existing) {
-        await CampaignTarget.query(trx).insert({
+        targetRow = await CampaignTarget.query(trx).insertAndFetch({
           campaign_id: campaign.id,
           integration_config_id: c.integrationConfigId,
           platform: c.platform === 'telegram_channel' ? 'telegram' : c.platform,
@@ -1062,11 +1103,42 @@ export async function finalizeComposerSession(sessionId, organizationId) {
             category_id: aparatMetadata.category_id || existing.settings_json?.category_id || null,
           };
         }
-        await CampaignTarget.query(trx).where({ id: existing.id }).patch(updates);
+        targetRow = await CampaignTarget.query(trx).patchAndFetchById(existing.id, updates);
+      }
+
+      // 4. Transactionally create PublishJob and OutboxEvent if target is ready and publisher is available
+      if (targetRow && targetRow.status === 'ready' && isPublisherAvailable(targetPlatform)) {
+        const existingJob = await PublishJob.query(trx)
+          .where({ campaign_target_id: targetRow.id })
+          .first();
+
+        if (!existingJob) {
+          const newJob = await PublishJob.query(trx).insertAndFetch({
+            organization_id: campaign.organization_id,
+            campaign_target_id: targetRow.id,
+            idempotency_key: `campaign-${campaign.id}-target-${targetRow.id}`,
+            status: JOB_STATUS.QUEUED,
+            attempt_count: 0,
+            max_attempts: 5,
+          });
+
+          await createOutboxEvent(trx, {
+            organizationId: campaign.organization_id,
+            eventType: `jobs.publish.${targetPlatform}`,
+            aggregateType: 'PublishJob',
+            aggregateId: String(newJob.id),
+            payloadJson: {
+              jobId: newJob.id,
+              organizationId: campaign.organization_id,
+              campaignTargetId: targetRow.id,
+            },
+          });
+          createdJobsCount++;
+        }
       }
     }
 
-    // 3. Update Campaign status to 'ready'
+    // 5. Update Campaign status to 'ready'
     await Campaign.query(trx)
       .where({ id: campaign.id })
       .patch({
@@ -1076,7 +1148,7 @@ export async function finalizeComposerSession(sessionId, organizationId) {
         cover_asset_id: ctx.coverAssetId || null,
       });
 
-    // 4. Update session to 'ready'
+    // 6. Update session to 'ready'
     await TelegramComposerSession.query(trx)
       .where({ id: sessionId })
       .patch({
@@ -1084,7 +1156,13 @@ export async function finalizeComposerSession(sessionId, organizationId) {
       });
 
     await trx.commit();
-    return { alreadyFinalized: false, success: true };
+    return {
+      alreadyFinalized: false,
+      success: true,
+      campaignId: campaign.id,
+      targetsCount: selectedCandidates.length,
+      createdJobsCount,
+    };
   } catch (err) {
     await trx.rollback();
     throw err;

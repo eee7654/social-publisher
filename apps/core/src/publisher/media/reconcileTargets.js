@@ -1,6 +1,11 @@
 import CampaignTarget from '../../db/models/core/CampaignTarget.js';
 import Campaign from '../../db/models/core/Campaign.js';
 import Asset from '../../db/models/core/Asset.js';
+import PublishJob from '../../db/models/core/PublishJob.js';
+import getDb from '../../config/database.js';
+import { createOutboxEvent } from '../outbox.js';
+import { JOB_STATUS } from '../constants.js';
+import { isPublisherAvailable } from '../telegram/capabilities.js';
 import { resolveYouTubeTargetAsset } from '../platforms/youtube/selection.js';
 import { resolveAparatTargetMedia } from '../platforms/aparat/selection.js';
 
@@ -84,6 +89,47 @@ export async function reconcileTargetsForVariant({ variantAsset, organizationId 
         await Campaign.query()
           .where({ id: campaignId, organization_id: organizationId })
           .patch({ status: 'ready' });
+      }
+    }
+
+    // Queue publish jobs for reconciled targets whose campaign is ready
+    for (const targetId of updatedTargets) {
+      const target = await CampaignTarget.query().findById(targetId);
+      if (!target || target.status !== 'ready') continue;
+      const campaign = await Campaign.query().findById(target.campaign_id);
+      if (!campaign || (campaign.status !== 'ready' && campaign.status !== 'ready_for_publish')) continue;
+
+      const platformCode = target.platform === 'telegram_channel' ? 'telegram' : target.platform;
+      if (!isPublisherAvailable(platformCode)) continue;
+
+      const existingJob = await PublishJob.query().where({ campaign_target_id: target.id }).first();
+      if (!existingJob) {
+        const trx = await getDb().transaction();
+        try {
+          const pj = await PublishJob.query(trx).insertAndFetch({
+            organization_id: campaign.organization_id,
+            campaign_target_id: target.id,
+            idempotency_key: `campaign-${campaign.id}-target-${target.id}`,
+            status: JOB_STATUS.QUEUED,
+            attempt_count: 0,
+            max_attempts: 5,
+          });
+          await createOutboxEvent(trx, {
+            organizationId: campaign.organization_id,
+            eventType: `jobs.publish.${platformCode}`,
+            aggregateType: 'PublishJob',
+            aggregateId: String(pj.id),
+            payloadJson: {
+              jobId: pj.id,
+              organizationId: campaign.organization_id,
+              campaignTargetId: target.id,
+            },
+          });
+          await trx.commit();
+        } catch (err) {
+          await trx.rollback();
+          console.error('[ReconcileTargets] Error creating publish job:', err.message);
+        }
       }
     }
   }

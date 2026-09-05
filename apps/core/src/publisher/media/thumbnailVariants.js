@@ -36,9 +36,10 @@ export const YOUTUBE_THUMBNAIL_SHORT_SPEC = Object.freeze({
   aspect_ratio: '9:16',
 });
 
-const CURRENT_DIR = path.dirname(fileURLToPath(import.meta.url));
-export const ELECIO_THUMBNAIL_BACKGROUND_PATH = path.resolve(CURRENT_DIR, 'layouts/elecio_horizontal_v1/background_1280x720.png');
-export const ELECIO_THUMBNAIL_MASK_PATH = path.resolve(CURRENT_DIR, 'layouts/elecio_horizontal_v1/mask_360x640.png');
+import { resolveLayoutAssetPath } from './layoutResolver.js';
+
+export const ELECIO_THUMBNAIL_BACKGROUND_PATH = resolveLayoutAssetPath('elecio_horizontal_v1/background_1280x720.png');
+export const ELECIO_THUMBNAIL_MASK_PATH = resolveLayoutAssetPath('elecio_horizontal_v1/mask_360x640.png');
 export const ELECIO_THUMBNAIL_BACKGROUND_SHA256 = '908950faf5787b45936789f53bf10e81e343037a4514b794f99bf8f7361c70e1';
 
 const db = getDb();

@@ -39,6 +39,7 @@ export async function startTelegramPolling(options = {}) {
         offset,
         limit: 50,
         timeout: pollTimeoutSeconds,
+        allowed_updates: ['message', 'callback_query'],
       });
 
       if (!isRunning) break;

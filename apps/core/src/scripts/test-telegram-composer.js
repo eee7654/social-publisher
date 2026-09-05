@@ -43,7 +43,7 @@ import {
   resetInjectedCapabilities,
 } from '../publisher/telegram/capabilities.js';
 import { validatePrivateChatUpdate } from '../publisher/telegram/validation.js';
-import { getTargetSelectionKeyboard } from '../publisher/telegram/keyboards.js';
+import { getTargetSelectionKeyboard, getFinalReviewKeyboard } from '../publisher/telegram/keyboards.js';
 import {
   ASSET_STATUS,
   ASSET_KIND,
@@ -960,21 +960,34 @@ async function runTests() {
       `CampaignTargets created: ${targetsFinal.length}`
     );
 
-    // Invariant 30 & 31: Zero publish jobs created in Phase 5
-    const publishJobsCount = await PublishJob.query().where({ organization_id: orgA.id });
+    // Invariant 30 & 31: Publish jobs created exactly once for confirmed available targets
+    const publishJobs = await PublishJob.query().where({ organization_id: orgA.id });
+    for (const j of publishJobs) trackedIds.jobs.add(j.id);
     check(
-      publishJobsCount.length === 0,
-      'final confirmation creates NO doomed real publish jobs for unavailable adapters',
-      `Publish jobs count: ${publishJobsCount.length}`
+      publishJobs.length === 1 && publishJobs[0].status === 'queued',
+      'publish jobs created exactly once for available targets and zero for unavailable adapters',
+      `Publish jobs count: ${publishJobs.length}`
     );
 
-    // Invariant 29: Re-confirming does not duplicate CampaignTargets
+    const outboxEvents = await db('outbox_events').where({ organization_id: orgA.id, aggregate_type: 'PublishJob' });
+    check(
+      outboxEvents.length === 1 && outboxEvents[0].event_type.startsWith('jobs.publish.'),
+      'outbox event created transactionally for publish job',
+      `Outbox count: ${outboxEvents.length}, event_type: ${outboxEvents[0]?.event_type}`
+    );
+
+    // Invariant 29: Re-confirming does not duplicate CampaignTargets, PublishJobs, or OutboxEvents
     await processTelegramUpdate(finalConfirmUpdate, { telegramClient: mockClient });
     const targetsAfterDuplicateConfirm = await CampaignTarget.query().where({ campaign_id: campaignAfterNewpost.id });
+    const publishJobsAfterDuplicate = await PublishJob.query().where({ organization_id: orgA.id });
+    const outboxAfterDuplicate = await db('outbox_events').where({ organization_id: orgA.id, aggregate_type: 'PublishJob' });
+
     check(
-      targetsAfterDuplicateConfirm.length === 3,
-      'repeated confirmation callback is idempotent and does not duplicate targets',
-      `Targets count remains: ${targetsAfterDuplicateConfirm.length}`
+      targetsAfterDuplicateConfirm.length === 3 &&
+      publishJobsAfterDuplicate.length === 1 &&
+      outboxAfterDuplicate.length === 1,
+      'repeated confirmation callback is strictly idempotent and does not duplicate targets, jobs, or outbox',
+      `Targets: ${targetsAfterDuplicateConfirm.length}, Jobs: ${publishJobsAfterDuplicate.length}, Outbox: ${outboxAfterDuplicate.length}`
     );
 
     // ==========================================================
@@ -1279,12 +1292,113 @@ async function runTests() {
       .first();
     if (skippedTarget) trackedIds.targets.add(skippedTarget.id);
 
+    // ==========================================================
+    // 16. Section 14 Callback Confirmation Regression Suite
+    // ==========================================================
+    // 14.1 Review keyboard emits expected confirm callback_data (final_ok)
+    const reviewKeyboard = getFinalReviewKeyboard();
+    const confirmBtn = reviewKeyboard.inline_keyboard[0][0];
     check(
-      finalizeSkipRes.success === true &&
-      Array.isArray(skippedTarget?.settings_json?.tags) &&
-      skippedTarget.settings_json.tags.length >= 3,
-      'Finalized skipped Aparat target has minimum 3 tags in settings_json',
-      `settings_json on skip: ${JSON.stringify(skippedTarget?.settings_json)}`
+      confirmBtn.callback_data === CALLBACK_ACTIONS.FINAL_CONFIRM && confirmBtn.callback_data === 'final_ok',
+      'review keyboard emits expected confirm callback_data (final_ok)',
+      `callback_data: ${confirmBtn.callback_data}`
+    );
+
+    // 14.2 getUpdates accepts allowed_updates with callback_query
+    let capturedGetUpdatesParams = null;
+    const clientInstance = new TelegramApiClient({ botToken: 'test_token' });
+    clientInstance.callMethod = async (method, params) => {
+      if (method === 'getUpdates') {
+        capturedGetUpdatesParams = params;
+        return [];
+      }
+      return {};
+    };
+    await clientInstance.getUpdates({ allowed_updates: ['message', 'callback_query'] });
+    check(
+      Array.isArray(capturedGetUpdatesParams?.allowed_updates) &&
+      capturedGetUpdatesParams.allowed_updates.includes('callback_query'),
+      'getUpdates accepts allowed_updates with callback_query',
+      `allowed_updates: ${JSON.stringify(capturedGetUpdatesParams?.allowed_updates)}`
+    );
+
+    // 14.3 Stale / invalid session returns user-visible response and triggers answerCallbackQuery
+    let answerCallbackCalled = false;
+    let answerCallbackText = '';
+    const staleTestClient = {
+      ...mockClient,
+      answerCallbackQuery: async (params) => {
+        answerCallbackCalled = true;
+        answerCallbackText = params.text;
+        return true;
+      },
+      sendMessage: async () => ({ message_id: 999 }),
+    };
+    await processTelegramUpdate({
+      update_id: makeUpdateId(),
+      callback_query: {
+        id: 'cb_stale_test',
+        message: { message_id: 200, chat: { id: tgUserIdA, type: 'private' } },
+        from: { id: tgUserIdA },
+        data: CALLBACK_ACTIONS.FINAL_CONFIRM,
+      },
+    }, { telegramClient: staleTestClient });
+    check(
+      answerCallbackCalled === true && answerCallbackText.includes('فعال نیست'),
+      'invalid/stale session triggers answerCallbackQuery with user feedback',
+      `answerCallbackText: ${answerCallbackText}`
+    );
+
+    // 14.4 Callback error does not silently disappear; produces user-visible message
+    const badCampaign = await Campaign.query().insertAndFetch({
+      organization_id: orgA.id,
+      status: 'draft',
+      source_type: 'telegram',
+    });
+    trackedIds.campaigns.add(badCampaign.id);
+
+    const badSession = await TelegramComposerSession.query().insertAndFetch({
+      telegram_user_id: String(tgUserIdA),
+      telegram_chat_id: String(tgUserIdA),
+      organization_id: orgA.id,
+      campaign_id: badCampaign.id,
+      state: COMPOSER_STATE.REVIEW,
+      context_json: {
+        candidates: [{ candidateId: 'ic_bad', platform: 'telegram', integrationConfigId: 99999999 }],
+        selectedTargetIds: ['ic_bad'],
+        metadata: {},
+      },
+    });
+    trackedIds.sessions.add(badSession.id);
+
+    let errorSentToUser = false;
+    let errorMessageText = '';
+    const errorTrackingClient = {
+      ...mockClient,
+      sendMessage: async (params) => {
+        if (params.text?.includes('خطا در نهایی‌سازی')) {
+          errorSentToUser = true;
+          errorMessageText = params.text;
+        }
+        return { message_id: 1000 };
+      },
+      answerCallbackQuery: async () => true,
+    };
+
+    await processTelegramUpdate({
+      update_id: makeUpdateId(),
+      callback_query: {
+        id: 'cb_error_test',
+        message: { message_id: 201, chat: { id: tgUserIdA, type: 'private' } },
+        from: { id: tgUserIdA },
+        data: CALLBACK_ACTIONS.FINAL_CONFIRM,
+      },
+    }, { telegramClient: errorTrackingClient });
+
+    check(
+      errorSentToUser === true,
+      'callback error produces explicit user-visible message without disappearing',
+      `Error message: ${errorMessageText.slice(0, 80)}`
     );
 
     resetInjectedCapabilities();

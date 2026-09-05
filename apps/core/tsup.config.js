@@ -1,4 +1,6 @@
 import { defineConfig } from 'tsup';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export default defineConfig({
   entry: [
@@ -16,4 +18,11 @@ export default defineConfig({
   format: ['esm'],
   clean: true,
   minify: true,
+  onSuccess: async () => {
+    const srcDir = path.resolve('src/publisher/media/layouts');
+    const destDir = path.resolve('dist/layouts');
+    if (fs.existsSync(srcDir)) {
+      fs.cpSync(srcDir, destDir, { recursive: true });
+    }
+  },
 });

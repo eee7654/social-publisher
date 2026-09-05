@@ -26,9 +26,10 @@ export const ELECIO_HORIZONTAL_VIDEO_SLOT = Object.freeze({
   radius: 75,
 });
 
-const CURRENT_DIR = path.dirname(fileURLToPath(import.meta.url));
-export const ELECIO_HORIZONTAL_BACKGROUND_PATH = path.resolve(CURRENT_DIR, 'layouts/elecio_horizontal_v1/background.png');
-export const ELECIO_HORIZONTAL_MASK_PATH = path.resolve(CURRENT_DIR, 'layouts/elecio_horizontal_v1/mask.png');
+import { resolveLayoutAssetPath } from './layoutResolver.js';
+
+export const ELECIO_HORIZONTAL_BACKGROUND_PATH = resolveLayoutAssetPath('elecio_horizontal_v1/background.png');
+export const ELECIO_HORIZONTAL_MASK_PATH = resolveLayoutAssetPath('elecio_horizontal_v1/mask.png');
 export const ELECIO_HORIZONTAL_BACKGROUND_SHA256 = 'a6aca169e9f3fb9fd7bf64cf84af759e4d8c93478d3682737f17c98a7a675e4a';
 
 export function layoutProvenance(sourceAssetId) {

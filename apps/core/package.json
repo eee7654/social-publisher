@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --inspect src/server.js",
-    "build": "tsup",
+    "build": "tsup && node -e \"const fs=require('node:fs');const p=require('node:path');const s=p.resolve('src/publisher/media/layouts');const d=p.resolve('dist/layouts');if(fs.existsSync(s))fs.cpSync(s,d,{recursive:true});\"",
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "db:setup": "tsx src/scripts/setup.js",
     "test:infra": "cross-env NODE_ENV=test tsx src/scripts/test-infra.js",

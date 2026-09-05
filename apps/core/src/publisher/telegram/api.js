@@ -320,10 +320,14 @@ export class TelegramApiClient {
     return this.callMethod('getMe');
   }
 
-  async getUpdates({ offset = 0, limit = 100, timeout = 30 } = {}) {
+  async getUpdates({ offset = 0, limit = 100, timeout = 30, allowed_updates } = {}) {
     // Timeout for HTTP request should be slightly larger than Telegram long-poll timeout
     const httpTimeout = (timeout + 10) * 1000;
-    return this.callMethod('getUpdates', { offset, limit, timeout }, { timeout: httpTimeout });
+    const params = { offset, limit, timeout };
+    if (allowed_updates) {
+      params.allowed_updates = allowed_updates;
+    }
+    return this.callMethod('getUpdates', params, { timeout: httpTimeout });
   }
 
   async getFile(fileId) {
