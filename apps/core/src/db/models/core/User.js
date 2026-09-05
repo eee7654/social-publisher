@@ -1,8 +1,8 @@
-import DefaultModel from './Default';
-import Session from './Session';
-import Account from './Account';
-import Role from './Role';
-import UserOrganizationRole from './UserOrganizationRole';
+import DefaultModel from './Default.js';
+import Session from './Session.js';
+import Account from './Account.js';
+import Role from './Role.js';
+import UserOrganizationRole from './UserOrganizationRole.js';
 
 class User extends DefaultModel {
   static get tableName() {

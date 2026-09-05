@@ -3,15 +3,74 @@ import { createRouter } from "next-connect";
 
 import authRoutes from './auth';
 import panelRoutes from './panel';
+import publisherRoutes from './publisher/index.js';
+import youtubeRoutes from './youtube.js';
+import linkedinRoutes from './linkedin.js';
+import aparatRoutes from './aparat.js';
 import { AppError } from "@/lib/AppError";
 import { ForbiddenError } from "@casl/ability";
 import { ErrorCodes } from "@/constants/responseCodes";
+
+import db from "@/config/database.js";
+import { getNatsConnection } from "@/services/messaging/nats.js";
+import { checkBucketAccess } from "@/services/storage/s3.js";
+import { checkTelegramHealth } from "@/publisher/telegram/api.js";
 
 const mainRouter = createRouter();
 
 mainRouter.use('/api/auth', authRoutes)
 
 mainRouter.use('/api/v1/panel', panelRoutes)
+
+mainRouter.use('/api/v1/publisher', publisherRoutes)
+
+mainRouter.use('/api/youtube', youtubeRoutes)
+
+mainRouter.use('/api/linkedin', linkedinRoutes)
+
+mainRouter.use('/api/aparat', aparatRoutes)
+
+mainRouter.get('/api/v1/health', async (req, res) => {
+    let dbOk = false;
+    try {
+        await db().raw('SELECT 1');
+        dbOk = true;
+    } catch (err) {
+        console.error('Health check DB error:', err);
+    }
+
+    // Check NATS (just verifying if the singleton connection exists and isn't closed)
+    const nc = getNatsConnection();
+    const natsOk = nc !== null && !nc.isClosed();
+
+    // Check S3
+    const s3Ok = await checkBucketAccess();
+
+    const telegramHealth = await checkTelegramHealth().catch((err) => ({
+        mode: process.env.TELEGRAM_BOT_API_MODE || 'cloud',
+        telegram_local_api: 'unhealthy',
+        telegram_bot: 'unavailable',
+        error: err.message,
+    }));
+
+    const telegramReady = telegramHealth.mode === 'local'
+        ? telegramHealth.telegram_local_api === 'healthy' && telegramHealth.telegram_bot === 'authenticated'
+        : true;
+    const overallOk = dbOk && natsOk && s3Ok && telegramReady;
+
+    res.status(overallOk ? 200 : 503).json({
+        status: overallOk ? 'ok' : 'error',
+        liveness: true,
+        readiness: overallOk,
+        mysql: dbOk,
+        nats: natsOk,
+        objectStorage: s3Ok,
+        telegram_local_api: telegramHealth.telegram_local_api,
+        telegram_bot: telegramHealth.telegram_bot,
+        telegram: telegramHealth,
+        timestamp: new Date().toISOString()
+    });
+});
 
 mainRouter.get('/api/loadtest', (req, res) => {
     res.status(200).json({

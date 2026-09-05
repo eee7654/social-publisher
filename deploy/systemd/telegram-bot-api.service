@@ -1,0 +1,30 @@
+[Unit]
+Description=Telegram Local Bot API for ElecIO Social Publisher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=elecio-telegram
+Group=elecio-telegram
+EnvironmentFile=/etc/elecio/telegram-bot-api.env
+ExecStart=/usr/local/bin/telegram-bot-api \
+  --api-id=${TELEGRAM_API_ID} \
+  --api-hash=${TELEGRAM_API_HASH} \
+  --local \
+  --http-ip-address=127.0.0.1 \
+  --http-port=8081 \
+  --dir=/var/lib/elecio/telegram-bot-api \
+  --temp-dir=/var/lib/elecio/telegram-bot-api/tmp
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/elecio/telegram-bot-api
+
+[Install]
+WantedBy=multi-user.target
+

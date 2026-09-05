@@ -1,7 +1,18 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/server.js'],
+  entry: [
+    'src/server.js',
+    'src/scripts/publisher-telegram-bot.js',
+    'src/scripts/publisher-outbox.js',
+    'src/scripts/publisher-scheduler.js',
+    'src/scripts/publisher-media-worker.js',
+    'src/scripts/publisher-cleanup-worker.js',
+    'src/scripts/publisher-youtube-worker.js',
+    'src/scripts/publisher-linkedin-worker.js',
+    'src/scripts/publisher-telegram-worker.js',
+    'src/scripts/publisher-aparat-worker.js',
+  ],
   format: ['esm'],
   clean: true,
   minify: true,

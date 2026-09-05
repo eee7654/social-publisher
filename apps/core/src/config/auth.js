@@ -43,6 +43,8 @@ export const auth = betterAuth({
     },
     trustedOrigins: [
         process.env.DASHBOARD_URL || "http://localhost:3000",
+        "http://localhost:4000",
+        ,"https://publisher-dev.elecio.co"
     ],
     advanced: {
         trustedProxyHeaders:true,

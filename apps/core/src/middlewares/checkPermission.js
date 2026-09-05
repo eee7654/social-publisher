@@ -10,6 +10,7 @@ import { ForbiddenError } from "@casl/ability";
 export const checkPermission = (action, subject) => {
     return async(req, res, next) => {
         if (!req.ability) throw new AppError(500, ErrorCodes.GEN_INTERNAL_ERROR, false);
+        console.log(`gggggggggggg`);
         ForbiddenError.from(req.ability).throwUnlessCan(action, subject);
         await next();
     };

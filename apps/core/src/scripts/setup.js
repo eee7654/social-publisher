@@ -1,14 +1,18 @@
 // scripts/setup.js
+import '../bootstrap.js';
 import knexConfig from '../../knexfile.js';
 import knex from 'knex';
 import { execSync } from 'child_process';
 import { auth } from '@/config/auth.js';
-import 'dotenv/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
 
 const createDatabase = async () => {
     console.log('⏳ [Phase 1] Provisioning Database and App User (Requires Root Privileges)...');
+    if (process.env.NODE_ENV === 'test' && !process.env.DB_NAME.endsWith('_test')) {
+        process.env.DB_NAME = `${process.env.DB_NAME}_test`;
+    }
     const dbName = process.env.DB_NAME;
     const appUser = process.env.DB_USER;
     const appPass = process.env.DB_PASS;
@@ -58,9 +62,18 @@ const runMigrations = async () => {
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
         const coreAppPath = path.join(__dirname, '..');
+        const dbName = process.env.DB_NAME;
         execSync('npx @better-auth/cli migrate --config ./config/auth.js push -y', { stdio: 'inherit', cwd:coreAppPath }); 
         console.log('   -> Running Knex migrations...');
-        const appKnex = knex(knexConfig.development);
+        // Re-evaluate knex config with the correct dbName
+        const config = {
+            ...knexConfig.development,
+            connection: {
+                ...knexConfig.development.connection,
+                database: dbName
+            }
+        };
+        const appKnex = knex(config);
         await appKnex.migrate.latest();
         await appKnex.destroy();
         console.log('✅ All migrations applied successfully.');
@@ -90,7 +103,20 @@ const runSeeder = async () => {
             { action: 'suspend', resource: 'Organization', description: 'Activate or deactivate an organization' },
             { action: 'manage_members', resource: 'Organization', description: 'Add, remove, or modify user roles' },
             { action: 'manage_settings', resource: 'Organization', description: 'Access and modify advanced settings' },
-            { action: 'view_analytics', resource: 'Organization', description: 'View org-level reports and analytics' }
+            { action: 'view_analytics', resource: 'Organization', description: 'View org-level reports and analytics' },
+            // Publisher Permissions
+            { action: 'read', resource: 'Campaign', description: 'View campaigns' },
+            { action: 'create', resource: 'Campaign', description: 'Create campaigns' },
+            { action: 'update', resource: 'Campaign', description: 'Edit campaigns' },
+            { action: 'publish', resource: 'Campaign', description: 'Publish campaigns' },
+            { action: 'read', resource: 'IntegrationConfig', description: 'View platform connections' },
+            { action: 'create', resource: 'IntegrationConfig', description: 'Create platform connections' },
+            { action: 'update', resource: 'IntegrationConfig', description: 'Edit platform connections' },
+            { action: 'delete', resource: 'IntegrationConfig', description: 'Delete platform connections' },
+            { action: 'read', resource: 'TelegramChannel', description: 'View Telegram channels' },
+            { action: 'create', resource: 'TelegramChannel', description: 'Add Telegram channels' },
+            { action: 'update', resource: 'TelegramChannel', description: 'Edit Telegram channels' },
+            { action: 'delete', resource: 'TelegramChannel', description: 'Remove Telegram channels' }
         ];
         console.log('   -> Inserting Core Permissions...');
         for (const perm of corePermissions) {
@@ -105,10 +131,16 @@ const runSeeder = async () => {
         const adminEmail = 'admin@system.local';
         let adminUser = null;
         try {
+            let adminPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD;
+            let generated = false;
+            if (!adminPassword) {
+                adminPassword = "123456";
+                generated = true;
+            }
             const authPayload = {
                 email: adminEmail,
                 name: 'مدیر ارشد سیستم',
-                password: '123456',
+                password: adminPassword,
                 username: 'admin',
                 displayUsername: 'Admin'
             };
@@ -120,6 +152,10 @@ const runSeeder = async () => {
              });
              adminUser = newAuthUser.user;
              console.log(`✅ Admin user created. (Email: ${adminEmail})`);
+             if (generated) {
+                 console.log(`🔑 ONE-TIME BOOTSTRAP PASSWORD: ${adminPassword}`);
+                 console.log(`⚠️ Please save this password immediately. It will not be shown again.`);
+             }
         } catch (authErr) {
              // فرض بر اینه که اگر کاربر از قبل باشه اینجا میفته
              // (باید توابع BetterAuth رو چک کنی چطور هندل میکنه)
@@ -151,6 +187,11 @@ const runSeeder = async () => {
             }
         }
         }
+        console.log('   -> Seeding System Integration Providers...');
+        const { seedIntegrationProviders } = await import('../integrations/seeder.js');
+        const providers = await seedIntegrationProviders();
+        console.log(`✅ Seeded ${providers.length} Integration Providers.`);
+
         console.log('🎉 Seeding completed successfully!');
     } catch (error) {
         console.error('❌ Seeding Error:', error);

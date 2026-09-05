@@ -1,6 +1,6 @@
 import { Model } from 'objection';
-import db from '@/config/database.js';
-import CaslQueryBuilder from '@/lib/CaslQueryBuilder';
+import db from '../../../config/database.js';
+import CaslQueryBuilder from '../../../lib/CaslQueryBuilder.js';
 
 class DefaultModel extends Model {
 

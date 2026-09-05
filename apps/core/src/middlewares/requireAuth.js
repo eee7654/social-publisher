@@ -76,6 +76,7 @@ export const requireAuth = async (req, res, next) => {
     if (!cachedRoleData) {
         const role = await Role.query().findById(roleId).withGraphFetched('permissions');                
         if (!role) {
+            console.log(ErrorCodes.ROLE_NOT_FOUND)
             throw new AppError(403, ErrorCodes.ROLE_NOT_FOUND);
         }
         let rawRules = [];
@@ -116,5 +117,6 @@ export const requireAuth = async (req, res, next) => {
     req.roleName = cachedRoleData.name;
     req.orgId = user.current_org_id || null;
     req.ability = createMongoAbility(finalRules);
+    console.log(`User ${user.email} authenticated with role ${cachedRoleData.name} and orgId ${req.orgId}`);
     return await next();
 };

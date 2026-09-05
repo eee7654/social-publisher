@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { requireActiveOrg } from '@/lib/auth-service';
 import { getDictionary } from '@/lib/dictionary';
 import UsersClient from './_components/UsersClient';
@@ -11,5 +12,9 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
     const { lang } = await params;
     await requireActiveOrg(lang);
-    return <UsersClient />;
+    return (
+        <Suspense fallback={null}>
+            <UsersClient />
+        </Suspense>
+    );
 }

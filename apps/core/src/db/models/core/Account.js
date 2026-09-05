@@ -1,4 +1,4 @@
-import DefaultModel from './Default';
+import DefaultModel from './Default.js';
 
 class Account extends DefaultModel {
   static get tableName() {

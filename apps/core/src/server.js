@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./bootstrap.js";
 import express from 'ultimate-express';
 import path from 'path';
 import cluster from 'cluster';
@@ -8,8 +8,9 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 import { routeHandler } from '@/routes';
+import { initJetStream } from '@/services/messaging/jetstream.js';
 
-var allowedOrigins = [process.env.DASHBOARD_URL || "http://localhost:3000"]
+var allowedOrigins = [process.env.DASHBOARD_URL || "http://localhost:3000", "http://localhost:4000", "https://publisher-dev.elecio.co"]
 
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -68,13 +69,83 @@ if (cluster.isPrimary) {
 
     app.set('trust proxy', 1);
 
+    // Note: This static /storage route is preserved for backward compatibility.
+    // New Publisher media MUST NOT use local /storage. They must use the S3-compatible storage abstraction.
     app.use('/storage', express.static(path.join(process.cwd(), "/storage")));
+
+    if (process.env.NODE_ENV !== 'production') {
+        app.get('/operator/login', (req, res) => {
+            res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self';");
+            res.send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Operator Login</title>
+                    <style>
+                        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; padding: 20px; }
+                        input, button { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
+                        #status { margin-top: 20px; padding: 10px; background: #f0f0f0; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Operator Login (DEV ONLY)</h2>
+                    <input type="email" id="email" placeholder="Email" />
+                    <input type="password" id="password" placeholder="Password" />
+                    <button onclick="login()">Sign In</button>
+                    <button onclick="checkSession()">Check Session</button>
+                    <div id="status">Status: Waiting...</div>
+
+                    <script>
+                        async function login() {
+                            const email = document.getElementById('email').value;
+                            const password = document.getElementById('password').value;
+                            const statusEl = document.getElementById('status');
+                            statusEl.innerText = "Status: Logging in...";
+                            try {
+                                const res = await fetch('/api/auth/sign-in/email', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ email, password }),
+                                    credentials: 'include'
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                    statusEl.innerText = "Status: Login successful! Checking session...";
+                                    await checkSession();
+                                } else {
+                                    statusEl.innerText = "Error: " + JSON.stringify(data);
+                                }
+                            } catch (e) {
+                                statusEl.innerText = "Exception: " + e.message;
+                            }
+                        }
+                        
+                        async function checkSession() {
+                            const statusEl = document.getElementById('status');
+                            try {
+                                const res = await fetch('/api/auth/get-session', { credentials: 'include' });
+                                const data = await res.json();
+                                if (res.ok && data.session) {
+                                    statusEl.innerHTML = "Status: Authenticated<br>User: " + data.user.email + "<br>ID: " + data.user.id;
+                                } else {
+                                    statusEl.innerText = "Status: Not authenticated";
+                                }
+                            } catch (e) {
+                                statusEl.innerText = "Exception: " + e.message;
+                            }
+                        }
+                    </script>
+                </body>
+                </html>
+            `);
+        });
+    }
 
     app.use(helmet());
 
     app.use(apiLimiter);
 
-    app.use(cors({
+    /*app.use(cors({
         origin: function(origin, callback) {
             if (origin == undefined) return callback(null, true);
             if (allowedOrigins.indexOf(origin) === -1) {
@@ -87,7 +158,7 @@ if (cluster.isPrimary) {
         credentials: true,
         methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", "Cookie","x-org-id"]
-    }));
+    }));*/
 
     app.use(express.json())
 
@@ -95,9 +166,13 @@ if (cluster.isPrimary) {
 
     app.all('/*', coreHandler);
 
-    app.listen(PORT, (token) => {
+    app.listen(PORT, async (token) => {
         if (token) {
             console.log(`🚀 Worker [${process.pid}] is running Esima Core on port ${PORT}`);
+            // Initialize messaging after listening
+            await initJetStream().catch(err => {
+                console.error(`Worker [${process.pid}] JetStream init failed:`, err.message);
+            });
         } else {
             console.log(`❌ Worker [${process.pid}] failed to start on port ${PORT}`);
         }
