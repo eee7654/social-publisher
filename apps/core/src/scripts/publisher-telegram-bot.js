@@ -18,6 +18,6 @@ async function main() {
   }
 }
 
-if (process.argv[1]?.endsWith('publisher-telegram-bot.js')) {
+if (process.argv[1]?.endsWith('publisher-telegram-bot.js') || process.env.pm_exec_path?.endsWith('publisher-telegram-bot.js')) {
   main();
 }

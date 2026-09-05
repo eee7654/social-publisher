@@ -411,7 +411,7 @@ export async function startMediaWorkers(options = {}) {
 }
 
 // Standalone execution entrypoint
-if (process.argv[1]?.endsWith('publisher-media-worker.js')) {
+if (process.argv[1]?.endsWith('publisher-media-worker.js') || process.env.pm_exec_path?.endsWith('publisher-media-worker.js')) {
   const controller = createShutdownController('MediaWorker');
 
   startMediaWorkers({ signal: controller.signal })

@@ -39,7 +39,7 @@ module.exports = {
       kill_timeout: 20000,
       env_production: {
         WORKER_COUNT: process.env.WORKER_COUNT || '1',
-        PORT: process.env.PORT || '4000',
+        PORT: '4100',
       },
     }),
     {
@@ -47,9 +47,13 @@ module.exports = {
       name: 'elecio-panel',
       cwd: panelCwd,
       script: 'pnpm',
-      args: 'start',
+      args: 'start -p 3100',
       max_memory_restart: '512M',
       kill_timeout: 20000,
+      env_production: {
+        ...common.env_production,
+        PORT: '3100',
+      },
     },
     coreNodeApp('elecio-telegram-bot', 'dist/scripts/publisher-telegram-bot.js', {
       max_memory_restart: '256M',

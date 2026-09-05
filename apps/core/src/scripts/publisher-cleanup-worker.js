@@ -134,7 +134,7 @@ export async function startCleanupWorker(options = {}) {
 }
 
 // Standalone execution entrypoint
-if (process.argv[1]?.endsWith('publisher-cleanup-worker.js')) {
+if (process.argv[1]?.endsWith('publisher-cleanup-worker.js') || process.env.pm_exec_path?.endsWith('publisher-cleanup-worker.js')) {
   const controller = createShutdownController('CleanupWorker');
 
   startCleanupWorker({ signal: controller.signal })

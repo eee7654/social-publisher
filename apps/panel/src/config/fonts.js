@@ -5,22 +5,22 @@ import { Open_Sans } from 'next/font/google';
 export const iranSans = localFont({
   src: [
     {
-      path: '../fonts/woff2/IranSansX-Regular.woff2',
+      path: '../fonts/woff2/IRANSansX-Regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../fonts/woff2/IranSansX-Medium.woff2',
+      path: '../fonts/woff2/IRANSansX-Medium.woff2',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../fonts/woff2/IranSansX-DemiBold.woff2',
+      path: '../fonts/woff2/IRANSansX-DemiBold.woff2',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../fonts/woff2/IranSansX-Bold.woff2',
+      path: '../fonts/woff2/IRANSansX-Bold.woff2',
       weight: '700',
       style: 'normal',
     },
